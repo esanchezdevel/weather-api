@@ -1,26 +1,58 @@
 package esanchez.devel.weather.exception;
 
+import org.springframework.http.HttpStatus;
+
+/**
+ * Custom Exception for manage microservice errors
+ * 
+ * @author Enrique Sanchez Jordan
+ *
+ */
 public class LocationException extends Exception {
 
+	private static final long serialVersionUID = -3703591570862647159L;
+
 	private String error;
-	private String description;
-	
+	private String detail;
+	private String code;
+	private HttpStatus statusCode;
+
+	public LocationException(String error, String code, String detail, HttpStatus statusCode) {
+		this.error = error;
+		this.code = code;
+		this.detail = detail;
+		this.statusCode = statusCode;
+	}
+
 	public String getError() {
 		return error;
 	}
+
 	public void setError(String error) {
 		this.error = error;
 	}
-	public String getDescription() {
-		return description;
+
+	public String getCode() {
+		return code;
 	}
-	public void setDescription(String description) {
-		this.description = description;
+
+	public void setCode(String code) {
+		this.code = code;
 	}
-	
-	@Override
-	public String toString() {
-		return "LocationException [" + (error != null ? "error=" + error + ", " : "")
-				+ (description != null ? "description=" + description : "") + "]";
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+
+	public HttpStatus getStatusCode() {
+		return statusCode;
+	}
+
+	public void setStatusCode(HttpStatus statusCode) {
+		this.statusCode = statusCode;
 	}
 }

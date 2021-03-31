@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import esanchez.devel.weather.entity.Location;
+import esanchez.devel.weather.exception.LocationException;
 import esanchez.devel.weather.repository.LocationRepository;
 
 /**
@@ -28,10 +31,12 @@ import esanchez.devel.weather.repository.LocationRepository;
 @RequestMapping("/weather/location")
 public class LocationRestController {
 	
+	public static final String SUCCESS_RESPONSE = "{\"status\" : \"ok\"}";
+	
 	@Autowired
 	private LocationRepository locationRepository;
 
-	@GetMapping("/")
+	@GetMapping()
 	public List<Location> list() {
 		/*
 		 * List all the locations
@@ -52,11 +57,25 @@ public class LocationRestController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> put (@PathVariable long id, @RequestBody Location input) {
+	public ResponseEntity<?> put (@PathVariable String id, @RequestBody Location input) throws LocationException {
 		/*
 		 * update one location
 		 */
-		return null;
+		Optional<Location> location = locationRepository.findById(id);
+		
+		if (location.isPresent()) {
+			Location locationDocument = location.get();
+			locationDocument.setName(input.getName());
+			locationDocument.setCountry(input.getCountry());
+			locationDocument.setLatitude(input.getLatitude());
+			locationDocument.setLongitude(input.getLongitude());
+			
+			locationRepository.save(locationDocument);
+		} else {
+			throw new LocationException("not found", "error-1003", "location not found", HttpStatus.NOT_FOUND);
+		}
+		
+		return ResponseEntity.ok(SUCCESS_RESPONSE);
 	}
 	
 	@PostMapping()
@@ -65,13 +84,15 @@ public class LocationRestController {
 		 * create new location
 		 */
 		locationRepository.save(input);
-		return null;
+		return ResponseEntity.ok(HttpStatus.OK);
 	}
 	
-	public ResponseEntity<?> delete() {
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@PathVariable String id) {
 		/*
 		 * remove one location
 		 */
-		return null;
+		locationRepository.deleteById(id);
+		return ResponseEntity.ok(HttpStatus.OK);
 	}
 }

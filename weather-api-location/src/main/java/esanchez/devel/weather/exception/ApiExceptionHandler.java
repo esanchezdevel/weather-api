@@ -38,4 +38,13 @@ public class ApiExceptionHandler {
 		StandarizedApiExceptionResponse response = new StandarizedApiExceptionResponse("Database Error", "error-1002", e.getMessage());
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	/*
+	 * Manage all LocationException of the microservice with this method
+	 */
+	@ExceptionHandler(LocationException.class)
+	public ResponseEntity<StandarizedApiExceptionResponse> handleLocationException(LocationException e) {
+		StandarizedApiExceptionResponse response = new StandarizedApiExceptionResponse(e.getError(), e.getCode(), e.getDetail());
+		return new ResponseEntity<>(response, e.getStatusCode());
+	}
 }
