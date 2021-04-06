@@ -73,5 +73,6 @@
 
 	<modules>
 		<module>weather-api-location</module>
+		<module>weather-api-weather</module>
 	</modules>
 </project>
